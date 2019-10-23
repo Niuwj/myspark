@@ -38,10 +38,12 @@ public final class JavaWordCount {
     //屏蔽日志
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN);
 
-    if (args.length < 1) {
-      System.err.println("Usage: JavaWordCount <file>");
-      System.exit(1);
-    }
+//    if (args.length < 1) {
+//      System.err.println("Usage: JavaWordCount <file>");
+//      System.exit(1);
+//    }
+//    String fname = args[0];
+    String fname = "data/access.txt";
 
     //spark 2.0之前的版本
 //    SparkConf sparkConf = new SparkConf().setAppName("wordCount").setMaster("local");
@@ -53,9 +55,9 @@ public final class JavaWordCount {
     SparkSession spark = SparkSession
       .builder()
       .appName("JavaWordCount")
-            .master("local")
+      .master("local")
       .getOrCreate();
-    JavaRDD<String> lines = spark.read().textFile(args[0]).javaRDD();
+    JavaRDD<String> lines = spark.read().textFile(fname).javaRDD();
 
     JavaRDD<String> words = lines.flatMap(s -> Arrays.asList(SPACE.split(s)).iterator());
 
@@ -66,7 +68,7 @@ public final class JavaWordCount {
     List<Tuple2<String, Integer>> output = counts.collect();
     for (Tuple2<?,?> tuple : output) {
       System.out.println(tuple._1() + ": " + tuple._2());
-    }
+    };
     spark.stop();
   }
 }
